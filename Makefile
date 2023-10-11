@@ -28,4 +28,7 @@ migratedown1:
 sqlc:
 	sqlc generate
 
-.PHONY: creatdb dropdb postgres migratedown migrateup migratedown1 migrateup1 test server mock docker sqlc
+server:
+	go run main.go
+
+.PHONY: server creatdb dropdb postgres migratedown migrateup migratedown1 migrateup1 test server mock docker sqlc

@@ -36,3 +36,8 @@ CREATE UTIL folder and CREATE random.go file to automatically generate username
 Then use it in the test file and test the package
 
 CREATE cypher.go file in DB/SQLC folder to run individual query and transaction, each query will do one operation and doesn't support transaction so we embed it in the Cypher Struct in the cypher.go file (this is called composition)
+
+
+IMPLEMENT GITHUB ACTION
+
+DEN CHECK ON GIN GOLANG

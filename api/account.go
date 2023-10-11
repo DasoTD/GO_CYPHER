@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"net/http"
 
 	db "github.com/dasotd/gocypher/db/sqlc"
@@ -11,9 +12,7 @@ import (
 
 type CreateAccountRequest struct {
 	Owner string `json:"owner" binding:"required,alphanum"`
-	Balance int64 `json:"balance" binding:"required,min=6"`
 	Currency string `json:"currency" binding:"required"`
-	// Lastname    string `json:"lastname" binding:"required"`
 }
 
 func(server *Server) createAccount(ctx *gin.Context){
@@ -27,7 +26,7 @@ func(server *Server) createAccount(ctx *gin.Context){
 
 	args := db.CreateAccountParams{
 		Owner:    req.Owner,
-		Balance:  req.Balance,
+		Balance:  0,
 		Currency: req.Currency,
 	}
 
@@ -42,4 +41,29 @@ func(server *Server) createAccount(ctx *gin.Context){
 		return
 	}
 	ctx.JSON(http.StatusOK, account)
+}
+
+type getAccountRequest struct {
+	ID int64 `uri:"id" binding:"required"`
+}
+
+func(server *Server) getAccount(ctx *gin.Context){
+	var req getAccountRequest
+	if err := ctx.BindUri(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	account, err := server.cypher.GetAccount(ctx, req.ID)
+	if err != nil {
+		if errors.Is(err, db.ErrRecordNotFound) {
+			ctx.JSON(http.StatusNotFound, errorResponse(err))
+			return
+		}
+
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+	ctx.JSON(http.StatusOK, account)
+
 }

@@ -46,7 +46,6 @@ func runGinServer(config util.Config, cypher db.Cypher) {
 		log.Fatal("cannot create server")
 		// log.Fatal().Err(err).Msg("cannot create server")
 	}
-	fmt.Println("connected")
 
 	err = server.Start(config.HTTPServerAddress)
 	if err != nil {

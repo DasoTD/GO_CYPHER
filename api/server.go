@@ -91,7 +91,7 @@ func NewServer(config util.Config, cypher db.Cypher) (*Server, error) {
 			})
 		
 			// Serve your HTML/JS for the Socket.IO client
-			router.Static("/static", "./static")
+			// router.Static("/static", "./static")
 		
 			
 			
