@@ -31,4 +31,7 @@ sqlc:
 server:
 	go run main.go
 
-.PHONY: server creatdb dropdb postgres migratedown migrateup migratedown1 migrateup1 test server mock docker sqlc
+mock:
+	mockgen -package MockDB -destination db/mock/cypher.go github.com/dasotd/gocypher/db/sqlc Cypher
+
+.PHONY: mock server creatdb dropdb postgres migratedown migrateup migratedown1 migrateup1 test server mock docker sqlc

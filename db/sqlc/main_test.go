@@ -9,7 +9,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-var testQueries *Queries
+var testQueries Cypher
 // var testDB *sql.DB
 
 var (
@@ -17,13 +17,15 @@ var (
 DB_SOURCE="postgresql://root:secret@localhost:5432/cypherdb?sslmode=disable"
 )
 
+
+
 func TestMain(m *testing.M){
-	testDB, err := pgxpool.New(context.Background(), DB_SOURCE)
+	connPool, err := pgxpool.New(context.Background(), DB_SOURCE)
 	if err != nil {
 		log.Fatal("cannot connect to db:", err)
 	}
 
-	testQueries = New(testDB)
+	testQueries = NewCypher(connPool)
 
 	os.Exit(m.Run())
 }

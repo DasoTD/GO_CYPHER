@@ -23,12 +23,14 @@ func main(){
 	}
 
 	conpool, err := pgxpool.New(context.Background(), config.DBSource)
-	cypher := db.New(conpool)
+	cypher := db.NewCypher(conpool)
 	// api.NewServer(config, cypher)
 	event := event.SingleTon()
 
 	sub := event.On("event1")
 	event.Emit("event1", "Hello Hi")
+
+	api.Socket()
 
 	// Receive and print events
 	fmt.Println("Event 1:", <-sub)

@@ -45,6 +45,9 @@ func NewServer(config util.Config, cypher db.Cypher) (*Server, error) {
 		v.RegisterValidation("currency", validCurrency)
 	}
 
+	server.setupRouter()
+	return server, nil
+
 
 	// router.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
 
@@ -68,55 +71,10 @@ func NewServer(config util.Config, cypher db.Cypher) (*Server, error) {
 	
 
 
-	server.setupRouter()
-	return server, nil
+	
 	}
 
-	func (server *Server) setupRouter() {
-			router  := gin.Default()
-			socket := socketio.NewServer(nil)
-			router.GET("/socket.io/", gin.WrapH(socket))
-			socket.OnConnect("/", func(so socketio.Conn) error {
-				log.Printf("Client connected: %s\n", so.ID())
-				so.SetContext("")
-				return nil
-			})
-			socket.OnEvent("/", "chat message", func(s socketio.Conn, msg string) {
-				log.Printf("Message from client [%s]: %s\n", s.ID(), msg)
-				socket.BroadcastToRoom("/", "chatroom", "chat message", msg)
-			})
-		
-			socket.OnDisconnect("/", func(s socketio.Conn, reason string) {
-				log.Println("Client disconnected:", s.ID(), reason)
-			})
-		
-			// Serve your HTML/JS for the Socket.IO client
-			// router.Static("/static", "./static")
-		
-			
-			
-			// router.POST("/users", server.createUser)
-			// router.POST("/users/login", server.loginUser)
-
-			// authroutes := router.Group("/").Use(authMiddleware(server.tokenMaker))
-			router.POST("/accounts", server.createAccount)
-			// authroutes.GET("/account/:id", server.getAccount)
-			// authroutes.GET("/account", server.listAccounts)
-			// authroutes.DELETE("/account/:id", server.deleteAccount)
-
-
-	// Entries Router
-			// router.POST("/entry", server.createEntry)
-			// router.GET("/entry/:id", server.getEntry)
-			// router.GET("/entries", server.ListEntry)
-			// router.DELETE("/entry/:id", server.deleteEntry)
-
-			// authroutes.POST("/transfer", server.createTransfer)
-
-			server.router = router
-	}
-
-
+	
 
 func errorResponse(err error) gin.H {
 		return gin.H{"error": err.Error()}
@@ -132,7 +90,7 @@ func Socket(){
 	fmt.Println("socket...")
 	socket := socketio.NewServer(nil)
 	socket.OnConnect("/", func(so socketio.Conn) error {
-		log.Printf("Client connected: %s\n", so.ID())
+		fmt.Printf("Client connected: %s\n", so.ID())
 		so.SetContext("")
 		return nil
 	})

@@ -40,4 +40,12 @@ CREATE cypher.go file in DB/SQLC folder to run individual query and transaction,
 
 IMPLEMENT GITHUB ACTION
 
-DEN CHECK ON GIN GOLANG
+DEN CHECK ON GIN GOLANG, create API folder, create server.go file in it and run the server/gin router setup there
+
+CREATE ACCOUNT.go file to implement the account related API
+Install Viper  to load config file and create config file in the UTIL folder to implement it.
+
+IMPLEMENT MOCK DB using GOMOCK package
+add it to path i.e (~/go/bin to path)
+
+CREATE MOCK folder and run the MOCK command in the MAKEFILE
