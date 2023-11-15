@@ -8,6 +8,9 @@
 [GIN-debug] GET    /static/*filepath         --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (3 handlers)
 [GIN-debug] HEAD   /static/*filepath         --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (3 handlers)
 [GIN-debug] POST   /accounts                 --> github.com/dasotd/gocypher/api.(*Server).createAccount-fm (3 handlers)
+[GIN-debug] POST   /transfer                 --> github.com/dasotd/gocypher/api.(*Server).createTransfer-fm (3 handlers)
+[GIN-debug] POST   /user                     --> github.com/dasotd/gocypher/api.(*Server).createUser-fm (3 handlers)
 [GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
 Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
 [GIN-debug] Listening and serving HTTP on 0.0.0.0:8080
+[GIN] 2023/11/14 - 18:25:16 | 200 |     52.1672ms |       127.0.0.1 | POST     "/transfer"

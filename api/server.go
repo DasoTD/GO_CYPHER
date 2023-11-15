@@ -111,7 +111,8 @@ func NewServer(config util.Config, cypher db.Cypher) (*Server, error) {
 			// router.GET("/entries", server.ListEntry)
 			// router.DELETE("/entry/:id", server.deleteEntry)
 
-			// authroutes.POST("/transfer", server.createTransfer)
+			router.POST("/transfer", server.createTransfer)
+			router.POST("/user", server.createUser)
 
 			server.router = router
 	}
