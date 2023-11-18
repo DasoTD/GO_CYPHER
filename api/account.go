@@ -16,6 +16,15 @@ type CreateAccountRequest struct {
 	// Lastname    string `json:"lastname" binding:"required"`
 }
 
+type AddAccountBalanceRequest struct {
+	Amount int64 `json:"amount"`
+	ID     int64 `json:"id"`
+}
+type DeleteAccounRequest struct {
+	// Amount int64 `json:"amount"`
+	ID     int64 `json:"id"`
+}
+
 func(server *Server) createAccount(ctx *gin.Context){
 
 	var req CreateAccountRequest
@@ -42,4 +51,47 @@ func(server *Server) createAccount(ctx *gin.Context){
 		return
 	}
 	ctx.JSON(http.StatusOK, account)
+}
+
+
+func (server *Server) AddAccountBalance(ctx *gin.Context){
+	var req AddAccountBalanceRequest
+	if err := ctx.BindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	args  := db.AddAccountBalanceParams {
+		Amount: req.Amount,
+		ID: req.ID,
+	}
+	_, err := server.cypher.GetAccount(ctx, req.ID);
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	account, err := server.cypher.AddAccountBalance(ctx, args);
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+	ctx.JSON(http.StatusOK, account)
+}
+
+
+func (server *Server) DeleteAccount(ctx *gin.Context){
+	var req DeleteAccounRequest
+	if err := ctx.BindJSON(&req); err !=nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	err := server.cypher.DeleteAccount(ctx, req.ID);
+	if err != nil { 
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, "Deleted successfully")
 }
