@@ -23,7 +23,7 @@ func (server *Server) createTransfer(ctx *gin.Context){
 		return
 	}
 
-	args := db.CreateTransferParams {
+	args := db.TransferTxParams {
 		FromAccountID: req.FromAccountID,
 		ToAccountID: req.ToAccountID,
 		Amount: req.Amount,
@@ -33,20 +33,19 @@ func (server *Server) createTransfer(ctx *gin.Context){
 	if !valid {
 		return
 	}
-
 	_, valid = server.validAccount(ctx, req.ToAccountID, req.Currency)
 	if !valid {
 		return
 	}
 
-	transfer, err := server.cypher.CreateTransfer(ctx, args)
+	result, err := server.cypher.TransferTx(ctx, args)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
-	ctx.JSON(http.StatusOK, transfer)
+	ctx.JSON(http.StatusOK, result)
 
 }
 
