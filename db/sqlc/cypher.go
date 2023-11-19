@@ -4,6 +4,8 @@ import (
 	// "context"
 	// "database/sql"
 
+	"context"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 	// "fmt"
 )
@@ -11,7 +13,7 @@ import (
 // Cypher defines all functions to execute db queries and transactions
 type Cypher interface {
 	Querier
-	// TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error)
+	TransferTx(ctx context.Context, arg TransferTxParams) (TransferTxResult, error)
 	// CreateUserTx(ctx context.Context, arg CreateUserTxParams) (CreateUserTxResult, error)
 	// VerifyEmailTx(ctx context.Context, arg VerifyEmailTxParams) (VerifyEmailTxResult, error)
 }

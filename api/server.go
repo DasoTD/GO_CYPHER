@@ -95,11 +95,9 @@ func NewServer(config util.Config, cypher db.Cypher) (*Server, error) {
 		
 			
 			
-			// router.POST("/users", server.createUser)
-			// router.POST("/users/login", server.loginUser)
 
-			// authroutes := router.Group("/").Use(authMiddleware(server.tokenMaker))
-			router.POST("/accounts", server.createAccount)
+			authroutes := router.Group("/").Use(authMiddleware(server.tokenMaker))
+			authroutes.POST("/accounts", server.createAccount)
 			// authroutes.GET("/account/:id", server.getAccount)
 			// authroutes.GET("/account", server.listAccounts)
 			// authroutes.DELETE("/account/:id", server.deleteAccount)
@@ -111,8 +109,9 @@ func NewServer(config util.Config, cypher db.Cypher) (*Server, error) {
 			// router.GET("/entries", server.ListEntry)
 			// router.DELETE("/entry/:id", server.deleteEntry)
 
-			router.POST("/transfer", server.createTransfer)
+			authroutes.POST("/transfer", server.createTransfer)
 			router.POST("/user", server.createUser)
+			router.POST("/users/login", server.loginUser)
 
 			server.router = router
 	}

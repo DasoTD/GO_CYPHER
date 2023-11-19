@@ -1,19 +1,18 @@
 package api
 
 import (
+	"errors"
 	"net/http"
-
 	db "github.com/dasotd/gocypher/db/sqlc"
+	"github.com/dasotd/gocypher/token"
 	_ "github.com/dasotd/gocypher/util"
 	"github.com/gin-gonic/gin"
 	// "github.com/dasotd/gocypher/api"
 )
 
 type CreateAccountRequest struct {
-	Owner string `json:"owner" binding:"required,alphanum"`
-	Balance int64 `json:"balance" binding:"required,min=6"`
+	// Owner string `json:"owner" binding:"required,alphanum"`
 	Currency string `json:"currency" binding:"required"`
-	// Lastname    string `json:"lastname" binding:"required"`
 }
 
 type AddAccountBalanceRequest struct {
@@ -21,7 +20,6 @@ type AddAccountBalanceRequest struct {
 	ID     int64 `json:"id"`
 }
 type DeleteAccounRequest struct {
-	// Amount int64 `json:"amount"`
 	ID     int64 `json:"id"`
 }
 
@@ -32,11 +30,12 @@ func(server *Server) createAccount(ctx *gin.Context){
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-	// hashedPassword, err := util.HashPassword(req.Password)
+
+	AuthPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 
 	args := db.CreateAccountParams{
-		Owner:    req.Owner,
-		Balance:  req.Balance,
+		Owner:    AuthPayload.Username,
+		Balance:  0,
 		Currency: req.Currency,
 	}
 
@@ -50,6 +49,13 @@ func(server *Server) createAccount(ctx *gin.Context){
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+	if account.Owner != authPayload.Username {
+		err := errors.New("account doesn't belong to the authenticated user")
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
+		return
+	}
+
 	ctx.JSON(http.StatusOK, account)
 }
 
@@ -77,6 +83,35 @@ func (server *Server) AddAccountBalance(ctx *gin.Context){
 		return
 	}
 	ctx.JSON(http.StatusOK, account)
+}
+
+
+type listAccountRequest struct {
+	PageID   int32 `form:"page_id" binding:"required,min=1"`
+	PageSize int32 `form:"page_size" binding:"required,min=5,max=10"`
+}
+
+func (server *Server) listAccounts(ctx *gin.Context) {
+	var req listAccountRequest
+	if err := ctx.ShouldBindQuery(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+	arg := db.ListAccountsParams{
+		Owner:  authPayload.Username,
+		Limit:  req.PageSize,
+		Offset: (req.PageID - 1) * req.PageSize,
+	}
+
+	accounts, err := server.cypher.ListAccounts(ctx, arg)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, accounts)
 }
 
 

@@ -22,8 +22,8 @@ func main(){
 		log.Fatal("can not load config")
 	}
 
-	conpool, err := pgxpool.New(context.Background(), config.DBSource)
-	cypher := db.New(conpool)
+	connpool, err := pgxpool.New(context.Background(), config.DBSource)
+	cypher := db.NewCypher(connpool)
 	// api.NewServer(config, cypher)
 	event := event.SingleTon()
 

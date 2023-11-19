@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	db "github.com/dasotd/gocypher/db/sqlc"
+	"github.com/dasotd/gocypher/token"
 	"github.com/gin-gonic/gin"
 )
 
@@ -23,14 +24,20 @@ func (server *Server) createTransfer(ctx *gin.Context){
 		return
 	}
 
-	args := db.CreateTransferParams {
+	args := db.TransferTxParams {
 		FromAccountID: req.FromAccountID,
 		ToAccountID: req.ToAccountID,
 		Amount: req.Amount,
 	}
 
-	_, valid := server.validAccount(ctx, req.FromAccountID, req.Currency)
+	fromAccount, valid := server.validAccount(ctx, req.FromAccountID, req.Currency)
 	if !valid {
+		return
+	}
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+	if fromAccount.Owner != authPayload.Username {
+		err := errors.New("from account doesn't belong to the authenticated user")
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
 		return
 	}
 
@@ -39,14 +46,14 @@ func (server *Server) createTransfer(ctx *gin.Context){
 		return
 	}
 
-	transfer, err := server.cypher.CreateTransfer(ctx, args)
+	result, err := server.cypher.TransferTx(ctx, args)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
-	ctx.JSON(http.StatusOK, transfer)
+	ctx.JSON(http.StatusOK, result)
 
 }
 

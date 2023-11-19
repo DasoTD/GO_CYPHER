@@ -36,3 +36,63 @@ CREATE UTIL folder and CREATE random.go file to automatically generate username
 Then use it in the test file and test the package
 
 CREATE cypher.go file in DB/SQLC folder to run individual query and transaction, each query will do one operation and doesn't support transaction so we embed it in the Cypher Struct in the cypher.go file (this is called composition)
+
+
+TRANSFER TRANSACTION HERE
+
+
+Create Transfer API, to implement the transaction function as a transaction
+The transaction API should also create entry for each of the transaction, then test the API
+
+
+CREATE USER 
+make owner in the ACCOUNT table a foreign key to the USERNAME field in the USER table
+Allow user to have multiple account but of different currency 
+To actualize  this add composite unique index to the ACCOUNT table i.e in index of ACCOUNT table 
+
+indexes {
+    ....others
+    ((owner, currency), [unique])
+}
+
+generate a  add_users migration  up and down file and paste the sql code from db diagram 
+create a user.sql file in the queries folder and create the appropriate query there
+
+THEN run SQLC GENERATE or MAKE SQLC if you have got it in the MakeFile.
+
+THEN, proceed to create a user_test.go file in the sqlc folder of db folder.
+
+CREATE USER create and login API and test, remember not to return the users hashed password among the the response
+
+IMPLEMENT TOKEN BASED AUTHENTICATION using PASETO and JWT
+The TOKEN is of 3 part the first part is: (base64 encoded not encrypted)
+    THE HEADER: which contain the algorithm and the type
+    THE PAYLOAD: which contain the user id , email, username, expired_at  and other credential
+    THE VERIFY SIGNATURE: only server has the secret to sign the token
+
+
+Now create a token folder
+
+create maker.go and create the MAKER interface
+create payload.go which house the PAYLOAD struct and the newPayload func
+create jwt_maker.go file that house JWTMaker struct, NewJWTMaker func that returns MAKER interface 
+    REMEMBER to implement the method in the MAKER interface on the JWTMaker struct
+
+To Integrate the Token on the Login and other API:
+    add the tokenMaker to ther server struct in server.go of api folder
+    create a new tokenMaker object tokenMaker, err := token.NewPasetoMaker(config.TokenSymmetricKey)
+    pass the config to the NewServer func and add it to the SERVER struct
+
+
+
+BUILD DOCKER FILE
+build the docker file, the image will not connecrt to the DB docker image so run
+docker inspect container ${DBImageName} then copy the IPAddress to change the host  e.g
+docker run --name cypherAPI -p 8080:8080 -e GIN_MODE=release -e "DB_SOURCE=postgresql://root:secret@172.17.0.2:5432/cypherdb?sslmode=disable" cypher:latest
+
+this is not the best approach, the best approach is to create a network by running
+docker network create {name} e.g docker network create Bank-Network
+then connect to it by running docker network connect Bank-Network cypher{name of container}
+then update query to this,
+
+docker run --narAPIme cypherAPI --network Bank-Network -p 8080:8080 -e GIN_MODE=release -e "DB_SOURCE=postgresql://root:secreme cypherAPI --network Bank-Network -p 8080:8080 -e GIN_MODE=release -et@cypher/cypherdb?sslmode=disable" cypher:latest
