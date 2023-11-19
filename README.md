@@ -82,3 +82,17 @@ To Integrate the Token on the Login and other API:
     add the tokenMaker to ther server struct in server.go of api folder
     create a new tokenMaker object tokenMaker, err := token.NewPasetoMaker(config.TokenSymmetricKey)
     pass the config to the NewServer func and add it to the SERVER struct
+
+
+
+BUILD DOCKER FILE
+build the docker file, the image will not connecrt to the DB docker image so run
+docker inspect container ${DBImageName} then copy the IPAddress to change the host  e.g
+docker run --name cypherAPI -p 8080:8080 -e GIN_MODE=release -e "DB_SOURCE=postgresql://root:secret@172.17.0.2:5432/cypherdb?sslmode=disable" cypher:latest
+
+this is not the best approach, the best approach is to create a network by running
+docker network create {name} e.g docker network create Bank-Network
+then connect to it by running docker network connect Bank-Network cypher{name of container}
+then update query to this,
+
+docker run --narAPIme cypherAPI --network Bank-Network -p 8080:8080 -e GIN_MODE=release -e "DB_SOURCE=postgresql://root:secreme cypherAPI --network Bank-Network -p 8080:8080 -e GIN_MODE=release -et@cypher/cypherdb?sslmode=disable" cypher:latest
