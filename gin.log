@@ -7,11 +7,18 @@
 [GIN-debug] GET    /socket.io/               --> github.com/dasotd/gocypher/api.(*Server).setupRouter.WrapH.func4 (3 handlers)
 [GIN-debug] GET    /static/*filepath         --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (3 handlers)
 [GIN-debug] HEAD   /static/*filepath         --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (3 handlers)
-[GIN-debug] POST   /accounts                 --> github.com/dasotd/gocypher/api.(*Server).createAccount-fm (3 handlers)
-[GIN-debug] POST   /transfer                 --> github.com/dasotd/gocypher/api.(*Server).createTransfer-fm (3 handlers)
+[GIN-debug] POST   /accounts                 --> github.com/dasotd/gocypher/api.(*Server).createAccount-fm (4 handlers)
+[GIN-debug] POST   /transfer                 --> github.com/dasotd/gocypher/api.(*Server).createTransfer-fm (4 handlers)
 [GIN-debug] POST   /user                     --> github.com/dasotd/gocypher/api.(*Server).createUser-fm (3 handlers)
 [GIN-debug] POST   /users/login              --> github.com/dasotd/gocypher/api.(*Server).loginUser-fm (3 handlers)
 [GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
 Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
 [GIN-debug] Listening and serving HTTP on 0.0.0.0:8080
-[GIN] 2023/11/18 - 12:29:22 | 200 |    133.4081ms |       127.0.0.1 | POST     "/users/login"
+[GIN] 2023/11/18 - 16:10:02 | 200 |    591.8694ms |             ::1 | POST     "/users/login"
+[GIN] 2023/11/18 - 16:10:28 | 401 |       564.2µs |       127.0.0.1 | POST     "/accounts"
+[GIN] 2023/11/18 - 16:10:37 | 200 |    149.4962ms |       127.0.0.1 | POST     "/accounts"
+[GIN] 2023/11/18 - 16:11:10 | 200 |    289.0717ms |             ::1 | POST     "/users/login"
+[GIN] 2023/11/18 - 16:11:33 | 401 |            0s |       127.0.0.1 | POST     "/accounts"
+[GIN] 2023/11/18 - 16:11:39 | 200 |    110.0183ms |       127.0.0.1 | POST     "/accounts"
+[GIN] 2023/11/18 - 16:12:03 | 200 |    214.8903ms |             ::1 | POST     "/transfer"
+[GIN] 2023/11/18 - 16:13:28 | 200 |    146.0767ms |             ::1 | POST     "/transfer"

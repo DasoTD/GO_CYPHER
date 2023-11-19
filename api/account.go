@@ -4,16 +4,15 @@ import (
 	"net/http"
 
 	db "github.com/dasotd/gocypher/db/sqlc"
+	"github.com/dasotd/gocypher/token"
 	_ "github.com/dasotd/gocypher/util"
 	"github.com/gin-gonic/gin"
 	// "github.com/dasotd/gocypher/api"
 )
 
 type CreateAccountRequest struct {
-	Owner string `json:"owner" binding:"required,alphanum"`
-	Balance int64 `json:"balance" binding:"required,min=6"`
+	// Owner string `json:"owner" binding:"required,alphanum"`
 	Currency string `json:"currency" binding:"required"`
-	// Lastname    string `json:"lastname" binding:"required"`
 }
 
 type AddAccountBalanceRequest struct {
@@ -21,7 +20,6 @@ type AddAccountBalanceRequest struct {
 	ID     int64 `json:"id"`
 }
 type DeleteAccounRequest struct {
-	// Amount int64 `json:"amount"`
 	ID     int64 `json:"id"`
 }
 
@@ -32,11 +30,12 @@ func(server *Server) createAccount(ctx *gin.Context){
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-	// hashedPassword, err := util.HashPassword(req.Password)
+
+	AuthPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 
 	args := db.CreateAccountParams{
-		Owner:    req.Owner,
-		Balance:  req.Balance,
+		Owner:    AuthPayload.Username,
+		Balance:  0,
 		Currency: req.Currency,
 	}
 
