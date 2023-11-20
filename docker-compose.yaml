@@ -8,10 +8,10 @@ services:
       - POSTGRES_DB=cypherdb
     ports:
       - "5432:5432"
-    # volumes:
-    #   - data-volume:/var/lib/postgresql/data
-  # redis:
-  #   image: redis:7-alpine
+    volumes:
+      - data-volume:/var/lib/postgresql/data
+  redis:
+    image: redis:7-alpine
   api:
     build:
       context: .
@@ -24,7 +24,7 @@ services:
       - REDIS_ADDRESS=redis:6379
     depends_on:
       - postgres
-#       - redis
+      - redis
     entrypoint:
       [
         "/app/wait-for.sh",
@@ -33,5 +33,5 @@ services:
         "/app/start.sh"
       ]
     command: [ "/app/main" ]
-# volumes:
-#   data-volume:
+volumes:
+  data-volume:
